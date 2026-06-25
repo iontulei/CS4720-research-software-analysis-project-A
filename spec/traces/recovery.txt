@@ -1,0 +1,359 @@
+FaB Paxos example execution: recovery (leader change)
+=====================================================
+
+Scenario: a correct leader, all acceptors correct, a single value v0, two terms
+(MaxPN = 1). Shows the recovery path: proposers suspect the leader, a new leader
+is elected at the next proposal number, it queries the acceptors, gathers a
+progress certificate from their replies, proposes, and a learner decides at
+proposal number 1.
+
+How produced: TLC breadth-first search, the shortest run that violates the
+read-only observer NeverLearnedAtPN1 defined in MCFaBPaxosTrace.tla. Proposal
+number 1 is reachable only through a LeaderChange, so the shortest run that
+learns at pn 1 must take the whole recovery path. The protocol in FaBPaxos.tla
+is unmodified. The state blocks below are TLC output, verbatim. The full
+untrimmed log is in recovery.raw.txt.
+
+Command (run from spec/):
+  java -jar ~/tools/tla2tools.jar -fp 1 -config traces/recovery.cfg MCFaBPaxosTrace.tla
+
+Reading: three SuspectLeader steps reach the suspicion threshold
+ceil((p + f + 1) / 2) = 3, then LeaderChange moves to pn 1, Query and five Reply
+steps build the progress certificate, LeaderPropose proposes the certified
+value, five Accept steps form the fast quorum, and learner l1 decides in
+State 18.
+
+----------------------------------------------------------------------
+
+Error: Invariant NeverLearnedAtPN1 is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ leader = p1
+/\ currentPN = 0
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> -1 @@ a2 :> -1 @@ a3 :> -1 @@ a4 :> -1 @@ a5 :> -1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = {}
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 2: <SuspectLeader line 262, col 3 to line 264, col 80 of module FaBPaxos>
+/\ leader = p1
+/\ currentPN = 0
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> -1 @@ a2 :> -1 @@ a3 :> -1 @@ a4 :> -1 @@ a5 :> -1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = {}
+/\ prSuspects = (p1 :> TRUE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 3: <SuspectLeader line 262, col 3 to line 264, col 80 of module FaBPaxos>
+/\ leader = p1
+/\ currentPN = 0
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> -1 @@ a2 :> -1 @@ a3 :> -1 @@ a4 :> -1 @@ a5 :> -1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = {}
+/\ prSuspects = (p1 :> TRUE @@ p2 :> TRUE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 4: <SuspectLeader line 262, col 3 to line 264, col 80 of module FaBPaxos>
+/\ leader = p1
+/\ currentPN = 0
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> -1 @@ a2 :> -1 @@ a3 :> -1 @@ a4 :> -1 @@ a5 :> -1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = {}
+/\ prSuspects = (p1 :> TRUE @@ p2 :> TRUE @@ p3 :> TRUE @@ p4 :> FALSE)
+
+State 5: <LeaderChange line 271, col 3 to line 278, col 61 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> -1 @@ a2 :> -1 @@ a3 :> -1 @@ a4 :> -1 @@ a5 :> -1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = {}
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 6: <Query line 283, col 3 to line 287, col 86 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> -1 @@ a2 :> -1 @@ a3 :> -1 @@ a4 :> -1 @@ a5 :> -1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = {[pn |-> 1, type |-> "QUERY"]}
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 7: <Reply line 294, col 3 to line 301, col 72 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> -1 @@ a3 :> -1 @@ a4 :> -1 @@ a5 :> -1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 8: <Reply line 294, col 3 to line 301, col 72 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> 1 @@ a3 :> -1 @@ a4 :> -1 @@ a5 :> -1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a2, value |-> NoValueVal, type |-> "REP"] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 9: <Reply line 294, col 3 to line 301, col 72 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> 1 @@ a3 :> 1 @@ a4 :> -1 @@ a5 :> -1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a2, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a3, value |-> NoValueVal, type |-> "REP"] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 10: <Reply line 294, col 3 to line 301, col 72 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> 1 @@ a3 :> 1 @@ a4 :> 1 @@ a5 :> -1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a2, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a3, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a4, value |-> NoValueVal, type |-> "REP"] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 11: <Reply line 294, col 3 to line 301, col 72 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> 1 @@ a3 :> 1 @@ a4 :> 1 @@ a5 :> 1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a2, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a3, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a4, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a5, value |-> NoValueVal, type |-> "REP"] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 12: <LeaderPropose line 197, col 3 to line 204, col 86 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> NoneVal @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> 1 @@ a3 :> 1 @@ a4 :> 1 @@ a5 :> 1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, value |-> v0, type |-> "PROPOSE"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a2, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a3, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a4, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a5, value |-> NoValueVal, type |-> "REP"] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 13: <Accept line 213, col 3 to line 227, col 73 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> <<v0, 1>> @@
+  a2 :> NoneVal @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> 1 @@ a3 :> 1 @@ a4 :> 1 @@ a5 :> 1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, value |-> v0, type |-> "PROPOSE"],
+  [pn |-> 1, acc |-> a1, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a2, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a3, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a4, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a5, value |-> NoValueVal, type |-> "REP"] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 14: <Accept line 213, col 3 to line 227, col 73 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> <<v0, 1>> @@
+  a2 :> <<v0, 1>> @@
+  a3 :> NoneVal @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> 1 @@ a3 :> 1 @@ a4 :> 1 @@ a5 :> 1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, value |-> v0, type |-> "PROPOSE"],
+  [pn |-> 1, acc |-> a1, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a2, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a2, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a3, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a4, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a5, value |-> NoValueVal, type |-> "REP"] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 15: <Accept line 213, col 3 to line 227, col 73 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> <<v0, 1>> @@
+  a2 :> <<v0, 1>> @@
+  a3 :> <<v0, 1>> @@
+  a4 :> NoneVal @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> 1 @@ a3 :> 1 @@ a4 :> 1 @@ a5 :> 1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, value |-> v0, type |-> "PROPOSE"],
+  [pn |-> 1, acc |-> a1, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a2, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a2, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a3, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a3, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a4, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a5, value |-> NoValueVal, type |-> "REP"] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 16: <Accept line 213, col 3 to line 227, col 73 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> <<v0, 1>> @@
+  a2 :> <<v0, 1>> @@
+  a3 :> <<v0, 1>> @@
+  a4 :> <<v0, 1>> @@
+  a5 :> NoneVal @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> 1 @@ a3 :> 1 @@ a4 :> 1 @@ a5 :> 1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, value |-> v0, type |-> "PROPOSE"],
+  [pn |-> 1, acc |-> a1, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a2, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a2, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a3, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a3, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a4, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a4, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a5, value |-> NoValueVal, type |-> "REP"] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 17: <Accept line 213, col 3 to line 227, col 73 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> <<v0, 1>> @@
+  a2 :> <<v0, 1>> @@
+  a3 :> <<v0, 1>> @@
+  a4 :> <<v0, 1>> @@
+  a5 :> <<v0, 1>> @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> 1 @@ a3 :> 1 @@ a4 :> 1 @@ a5 :> 1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> NoneVal @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, value |-> v0, type |-> "PROPOSE"],
+  [pn |-> 1, acc |-> a1, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a2, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a2, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a3, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a3, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a4, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a4, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a5, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a5, value |-> NoValueVal, type |-> "REP"] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+
+State 18: <Learn line 232, col 3 to line 238, col 75 of module FaBPaxos>
+/\ leader = p2
+/\ currentPN = 1
+/\ accAccepted = ( a1 :> <<v0, 1>> @@
+  a2 :> <<v0, 1>> @@
+  a3 :> <<v0, 1>> @@
+  a4 :> <<v0, 1>> @@
+  a5 :> <<v0, 1>> @@
+  a6 :> NoneVal )
+/\ accLargestPN = (a1 :> 1 @@ a2 :> 1 @@ a3 :> 1 @@ a4 :> 1 @@ a5 :> 1 @@ a6 :> -1)
+/\ lnLearned = (l1 :> <<v0, 1>> @@ l2 :> NoneVal @@ l3 :> NoneVal @@ l4 :> NoneVal)
+/\ msgs = { [pn |-> 1, type |-> "QUERY"],
+  [pn |-> 1, value |-> v0, type |-> "PROPOSE"],
+  [pn |-> 1, acc |-> a1, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a1, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a2, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a2, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a3, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a3, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a4, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a4, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, acc |-> a5, value |-> v0, type |-> "ACCEPTED"],
+  [pn |-> 1, acc |-> a5, value |-> NoValueVal, type |-> "REP"],
+  [pn |-> 1, value |-> v0, type |-> "LEARNED", learner |-> l1] }
+/\ prSuspects = (p1 :> FALSE @@ p2 :> FALSE @@ p3 :> FALSE @@ p4 :> FALSE)
+

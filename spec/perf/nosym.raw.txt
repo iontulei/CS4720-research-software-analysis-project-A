@@ -1,0 +1,27 @@
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Warning: Please run the Java VM which executes TLC with a throughput optimized garbage collector by passing the "-XX:+UseParallelGC" property.
+(Use the -nowarning option to disable this warning.)
+Running breadth-first search Model-Checking with fp 71 and seed -5606525783481897295 with 4 workers on 10 cores with 6144MB heap and 64MB offheap memory [pid: 90626] (Mac OS X 26.2 aarch64, Homebrew 25.0.2 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /Users/iontulei/Downloads/cs4720-research-software-analysis/research-project/repo/spec/MCFaBPaxos.tla
+Parsing file /Users/iontulei/Downloads/cs4720-research-software-analysis/research-project/repo/spec/FaBPaxos.tla
+Parsing file /private/var/folders/z0/s064xb5x09vbtrl8w_9grdx80000gn/T/TLC.tla
+Parsing file /private/var/folders/z0/s064xb5x09vbtrl8w_9grdx80000gn/T/Integers.tla
+Parsing file /private/var/folders/z0/s064xb5x09vbtrl8w_9grdx80000gn/T/FiniteSets.tla
+Parsing file /private/var/folders/z0/s064xb5x09vbtrl8w_9grdx80000gn/T/Naturals.tla
+Parsing file /private/var/folders/z0/s064xb5x09vbtrl8w_9grdx80000gn/T/Sequences.tla
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module FaBPaxos
+Semantic processing of module TLC
+Semantic processing of module MCFaBPaxos
+Starting... (2026-06-20 00:24:08)
+Computing initial states...
+Computed 2 initial states...
+Finished computing initial states: 4 distinct states generated at 2026-06-20 00:24:08.
+Progress(13) at 2026-06-20 00:24:11: 809.824 states generated (809.824 s/min), 134.911 distinct states found (134.911 ds/min), 63.940 states left on queue.
+Progress(18) at 2026-06-20 00:25:11: 16.696.152 states generated (15.886.328 s/min), 2.294.489 distinct states found (2.159.578 ds/min), 893.014 states left on queue.
+Progress(20) at 2026-06-20 00:26:11: 32.090.239 states generated (15.394.087 s/min), 3.988.653 distinct states found (1.694.164 ds/min), 1.436.675 states left on queue.
+Progress(20) at 2026-06-20 00:27:11: 47.026.465 states generated (14.936.226 s/min), 5.423.956 distinct states found (1.435.303 ds/min), 1.863.472 states left on queue.
+GUARD: manual cut (symmetry OFF exploded; ~4M states in ~3min, queue >1.4M growing; did not finish; OOM-bound). Contrast: 147,340 with symmetry.

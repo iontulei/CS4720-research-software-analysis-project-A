@@ -1,0 +1,24 @@
+# OS
+.DS_Store
+Thumbs.db
+*~
+*.swp
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# TLA+ artifacts
+states/
+*.toolbox/
+*.dot
+MC.cfg.bak
+*.tla.swp
+
+# Build / temp
+*.log
+.tlatools/
+
+# Copyrighted reference material (do not commit)
+docs/fab.pdf
